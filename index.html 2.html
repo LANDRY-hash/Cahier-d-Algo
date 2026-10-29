@@ -1,0 +1,1374 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Cahier d'algo, leçons et exercices de pseudo-code</title>
+<meta name="description" content="5 leçons et 27 exercices de pseudo-code en français, de difficulté croissante : variables, conditions, boucles, tableaux, tris et récursivité. Avec indices et corrigés.">
+<meta name="theme-color" content="#2540C8">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="fr_FR">
+<meta property="og:title" content="Cahier d'algo, leçons et exercices de pseudo-code">
+<meta property="og:description" content="5 leçons et 27 exercices de pseudo-code en français, de difficulté croissante : variables, conditions, boucles, tableaux, tris et récursivité. Avec indices et corrigés.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Hanken+Grotesk:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Concept : une page de cahier. Liste d'exercices sur lignes réglées, éditeur sur papier Seyès avec marge rouge, titre souligné en double trait rouge comme un titre corrigé au stylo. */
+:root{
+  --paper:#F5F7FD;
+  --panel:#E9EEFB;
+  --ink:#131B44;
+  --ink-soft:#4A5585;
+  --rule:#C5D0F0;
+  --accent:#2540C8;
+  --on-accent:#FFFFFF;
+  --margin:#CF3F38;
+  --ok:#0F7A58;
+  --on-ok:#FFFFFF;
+  --kw:#2540C8;
+  --ty:#7336B8;
+  --str:#0F7A58;
+  --num:#A8501A;
+  --com:#5B6792;
+  --font-display:"Bricolage Grotesque","Trebuchet MS",system-ui,sans-serif;
+  --font-body:"Hanken Grotesk",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --font-code:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+  --lh:26px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#10152B;--panel:#1A2142;--ink:#E7EBFF;--ink-soft:#A3AEDD;--rule:#2B3665;
+    --accent:#93A5FF;--on-accent:#0B1130;--margin:#FF7C72;--ok:#4FD6A0;--on-ok:#06241A;
+    --kw:#93A5FF;--ty:#C8A7FF;--str:#5FD9A8;--num:#FFB57F;--com:#8F9BCB;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#10152B;--panel:#1A2142;--ink:#E7EBFF;--ink-soft:#A3AEDD;--rule:#2B3665;
+  --accent:#93A5FF;--on-accent:#0B1130;--margin:#FF7C72;--ok:#4FD6A0;--on-ok:#06241A;
+  --kw:#93A5FF;--ty:#C8A7FF;--str:#5FD9A8;--num:#FFB57F;--com:#8F9BCB;
+  color-scheme:dark;
+}
+
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;background:var(--paper);color:var(--ink);
+  font:400 16px/1.55 var(--font-body);
+  padding-block:20px 56px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));
+  padding-right:max(16px,env(safe-area-inset-right,0px));
+}
+.wrap{max-width:720px;margin-inline:auto}
+h1,h2,h3{font-family:var(--font-display);text-wrap:balance;line-height:1.15;margin:0}
+p{margin:0}
+a{color:inherit}
+code{font:500 .9em var(--font-code);background:var(--panel);padding:1px 5px;border-radius:4px}
+.muted{color:var(--ink-soft)}
+.small{font-size:14px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+
+/* Boutons */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  min-height:44px;padding:0 16px;border-radius:8px;
+  border:1.5px solid var(--ink);background:transparent;color:var(--ink);
+  font:600 15px/1.2 var(--font-body);text-decoration:none;cursor:pointer;text-align:center;
+}
+.btn:disabled{opacity:.55;cursor:default}
+.btn-primary{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.btn-quiet{border-color:var(--rule)}
+.btn-sm{min-height:36px;padding:0 12px;font-size:13px}
+.btn-done{background:var(--ok);border-color:var(--ok);color:var(--on-ok)}
+.btn-col{flex-direction:column;align-items:flex-start;gap:2px;text-align:left;width:100%;padding:12px 16px}
+.btn-col .lab{font:600 12px var(--font-body);letter-spacing:.08em;text-transform:uppercase;opacity:.85}
+.btn-col .ttl{font:700 18px/1.2 var(--font-display)}
+
+/* Accueil */
+.top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.brand{
+  display:inline-block;font:700 30px/1.1 var(--font-display);letter-spacing:-.02em;
+  border-bottom:3px double var(--margin);padding-bottom:3px;
+}
+.tag{margin-top:10px;color:var(--ink-soft);font-size:15px;max-width:34ch}
+.summary{background:var(--panel);border-radius:12px;padding:16px;display:grid;gap:12px;margin-top:22px}
+.summary-line{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+.summary-line b{font:700 20px var(--font-display)}
+.segs{display:flex;gap:3px}
+.seg{flex:1;height:8px;border-radius:2px;background:var(--rule)}
+.seg.on{background:var(--ok)}
+
+.level{margin-top:32px}
+.lvl-head{display:grid;gap:6px;margin-bottom:10px}
+.lvl-top{display:flex;align-items:center;flex-wrap:wrap;gap:6px 10px;font:600 12px var(--font-body);letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft)}
+.lvl-count{margin-left:auto;letter-spacing:.04em}
+.dots{display:inline-flex;gap:3px}
+.dots i{width:8px;height:8px;border-radius:50%;border:1.5px solid var(--ink-soft)}
+.dots i.on{background:var(--ink);border-color:var(--ink)}
+.level h2{font-size:22px;letter-spacing:-.01em}
+.exos{list-style:none;margin:0;padding:0;border-top:1.5px solid var(--rule)}
+.exo{
+  display:grid;grid-template-columns:26px minmax(0,1fr) 20px;gap:12px;align-items:center;
+  min-height:60px;padding:10px 4px;text-decoration:none;border-bottom:1.5px solid var(--rule);
+}
+.exo:hover .exo-title{text-decoration:underline;text-underline-offset:3px}
+.st{width:24px;height:24px;border-radius:50%;border:2px solid var(--rule);display:grid;place-items:center;position:relative}
+.st.done{background:var(--ok);border-color:var(--ok);color:var(--on-ok)}
+.st.draft{border-color:var(--accent);border-style:dashed}
+.exo-txt{display:grid;gap:1px;min-width:0}
+.exo-title{font-weight:600}
+.exo-notions{font-size:13px;color:var(--ink-soft)}
+.chev{color:var(--ink-soft);display:grid;place-items:center}
+
+/* Exercice */
+.back{display:inline-flex;align-items:center;min-height:44px;font-weight:600;font-size:15px;text-decoration:none;color:var(--ink-soft)}
+.exo-head{display:grid;gap:10px;margin:6px 0 16px}
+.exo-h{font-size:30px;letter-spacing:-.02em}
+.notions{display:flex;flex-wrap:wrap;gap:6px}
+.notion{font-size:13px;padding:2px 10px;border:1.5px solid var(--rule);border-radius:99px;color:var(--ink-soft)}
+.prose p{max-width:65ch}
+.example{
+  display:grid;grid-template-columns:auto minmax(0,1fr);gap:6px 14px;margin:16px 0 0;
+  background:var(--panel);border-radius:10px;padding:12px 14px;font:14px/1.5 var(--font-code);
+}
+.example dt{color:var(--ink-soft);font:600 12px var(--font-body);letter-spacing:.08em;text-transform:uppercase;padding-top:2px}
+.example dd{margin:0;overflow-wrap:anywhere}
+
+.sec{margin-top:30px}
+.sec>h2{font:600 12px var(--font-body);letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:10px}
+
+.chips{display:flex;gap:6px;overflow-x:auto;padding:2px 0 8px;scrollbar-width:thin}
+.chip{
+  flex:none;min-height:40px;min-width:40px;padding:0 12px;border-radius:8px;
+  border:1.5px solid var(--rule);background:var(--panel);color:var(--ink);
+  font:500 14px var(--font-code);cursor:pointer;
+}
+.paper{position:relative;border:1.5px solid var(--rule);border-radius:10px;background:var(--paper);overflow:hidden}
+.paper::before{content:"";position:absolute;top:0;bottom:0;left:40px;width:1.5px;background:var(--margin);opacity:.75;pointer-events:none}
+.paper:focus-within{outline:3px solid var(--accent);outline-offset:2px}
+.paper textarea{
+  display:block;width:100%;min-height:calc(var(--lh) * 12 + 20px);margin:0;border:0;outline:none;resize:vertical;
+  background-color:transparent;
+  background-image:linear-gradient(to bottom,transparent calc(var(--lh) - 1px),var(--rule) calc(var(--lh) - 1px));
+  background-size:100% var(--lh);background-attachment:local;background-position:0 10px;
+  padding:10px 12px 10px 52px;color:var(--ink);
+  font:400 14px/var(--lh) var(--font-code);white-space:pre;overflow:auto;tab-size:2;
+}
+.paper textarea::placeholder{color:var(--ink-soft);opacity:.8}
+@media (pointer:coarse){.paper textarea{font-size:16px}}
+.ed-foot{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:8px;flex-wrap:wrap}
+.hint-line{font-size:13px;color:var(--ink-soft)}
+
+.hints{margin:0 0 12px;padding:0;list-style:none;display:grid;gap:8px;counter-reset:h}
+.hints li{counter-increment:h;display:grid;grid-template-columns:28px minmax(0,1fr);gap:8px;background:var(--panel);border-radius:10px;padding:10px 12px}
+.hints li::before{content:counter(h);width:24px;height:24px;border-radius:50%;background:var(--ink);color:var(--paper);display:grid;place-items:center;font:600 13px var(--font-body)}
+
+.tablewrap{overflow-x:auto;border:1.5px solid var(--rule);border-radius:10px;margin-top:12px}
+table{border-collapse:collapse;width:100%;font:14px/1.45 var(--font-code)}
+th{font:600 12px var(--font-body);text-transform:uppercase;letter-spacing:.06em;text-align:left;color:var(--ink-soft);background:var(--panel)}
+th,td{padding:9px 12px;border-bottom:1px solid var(--rule);vertical-align:top}
+tr:last-child td{border-bottom:0}
+td{overflow-wrap:anywhere}
+.checks{list-style:none;padding:0;margin:16px 0 0;display:grid;gap:10px}
+.checks label{display:flex;gap:12px;align-items:flex-start;cursor:pointer}
+.checks input{width:22px;height:22px;margin:1px 0 0;accent-color:var(--accent);flex:none}
+
+.codehead{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:8px;font-weight:600}
+.code{
+  margin:0;background:var(--panel);border-radius:10px;padding:14px 16px;overflow-x:auto;
+  font:400 14px/1.65 var(--font-code);tab-size:2;white-space:pre;
+}
+.t-kw{color:var(--kw);font-weight:500}
+.t-ty{color:var(--ty)}
+.t-str{color:var(--str)}
+.t-num{color:var(--num)}
+.t-com{color:var(--com);font-style:italic}
+.t-op{color:var(--margin)}
+.explain{margin-top:16px;display:grid;gap:6px}
+.explain h3{font-size:17px}
+.explain p{max-width:65ch}
+.confirm{background:var(--panel);border-radius:10px;padding:14px;display:grid;gap:12px}
+.btns{display:flex;flex-wrap:wrap;gap:8px}
+
+.finish{margin-top:34px;display:grid;gap:12px}
+.pager{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:6px}
+.pg{display:grid;gap:2px;padding:10px 12px;border:1.5px solid var(--rule);border-radius:10px;text-decoration:none;min-height:60px;align-content:center}
+.pg span{font:600 12px var(--font-body);letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft)}
+.pg b{font-weight:600;font-size:15px;line-height:1.25}
+.pg-next{text-align:right}
+
+/* Aide-mémoire */
+.memo{margin-top:26px;display:grid;gap:8px}
+.memo h2{font-size:19px}
+.memo p{max-width:65ch;font-size:15px}
+
+/* Leçons */
+.lesson h2{font-size:21px;letter-spacing:-.01em;margin-top:32px}
+.lesson .ls-p{margin-top:8px;max-width:65ch}
+.lesson .code,.lesson .tablewrap{margin-top:12px}
+.lesson table{font:15px/1.45 var(--font-body)}
+.lesson td:first-child{font-weight:600}
+.ls-list{margin:10px 0 0;padding-left:22px;display:grid;gap:6px;max-width:65ch}
+.ls-intro{max-width:50ch}
+.tip{margin-top:26px;border:1.5px solid var(--rule);border-radius:10px;padding:14px 16px}
+.tip b,.retenir b{display:block;font:600 12px var(--font-body);letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:8px}
+.tip ul,.retenir ul{margin:0;padding-left:20px;display:grid;gap:6px}
+.retenir{margin-top:32px;background:var(--panel);border-top:3px double var(--margin);border-radius:4px 4px 10px 10px;padding:16px}
+.lesson-link{justify-self:start;margin-top:4px}
+
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+
+
+<div class="wrap" id="app"></div>
+
+<noscript><p>Cahier d'algo demande JavaScript pour afficher les leçons et les exercices de pseudo-code.</p></noscript>
+<script>
+(function(){
+'use strict';
+
+/* ---------- Contenu ---------- */
+var LEVELS=[
+  {nom:"Premiers pas",desc:"Variables, lecture, écriture et calculs. Pas encore de choix ni de boucle : seul l'ordre des instructions compte."},
+  {nom:"Conditions",desc:"Faire des choix avec Si, SinonSi et Sinon. Pense toujours aux cas limites."},
+  {nom:"Boucles",desc:"Répéter des instructions avec Pour, TantQue et Répéter."},
+  {nom:"Tableaux et fonctions",desc:"Parcourir des tableaux et découper un problème en fonctions."},
+  {nom:"Algorithmes classiques",desc:"Recherche, tri et récursivité, les grands classiques des cours d'informatique."}
+];
+
+var EXOS=[
+/* ===== Niveau 1 ===== */
+{id:"n1-1",lvl:0,titre:"Bonjour",notions:"Chaîne · Lire · Écrire",
+ enonce:"Demande son prénom à l'utilisateur, puis affiche « Bonjour » suivi de ce prénom.",
+ ex:{e:"Awa",s:"Bonjour Awa"},
+ indices:[
+  "Il te faut une variable de type Chaîne pour mémoriser le prénom.",
+  "{Lire(prenom)} range dans la variable ce que l'utilisateur tape.",
+  "{Écrire} accepte plusieurs éléments séparés par des virgules : un texte entre guillemets, puis une variable."],
+ tests:[["Awa","Bonjour Awa"],["Koffi","Bonjour Koffi"]],
+ checks:["La variable est déclarée avec son type.","La lecture a lieu avant l'affichage."],
+ corrige:`Algorithme Bonjour
+Variables
+  prenom : Chaîne
+Début
+  Écrire("Quel est ton prénom ?")
+  Lire(prenom)
+  Écrire("Bonjour ", prenom)
+Fin`,
+ expl:"L'ordre compte : on lit d'abord, on affiche ensuite. Les guillemets servent à écrire un texte tel quel. Une variable s'écrit sans guillemets, pour que sa valeur soit affichée."},
+
+{id:"n1-2",lvl:0,titre:"Aire et périmètre",notions:"Réel · Calculs",
+ enonce:"Lis la longueur et la largeur d'un rectangle (des nombres réels), puis affiche son aire et son périmètre.",
+ ex:{e:"longueur = 5, largeur = 3",s:"aire 15, périmètre 16"},
+ indices:[
+  "Quatre variables suffisent : longueur, largeur, aire et périmètre. Choisis le type Réel.",
+  "L'aire vaut {longueur * largeur}.",
+  "Le périmètre vaut {2 * (longueur + largeur)}. Les parenthèses sont nécessaires."],
+ tests:[["longueur 5 ; largeur 3","aire 15 ; périmètre 16"],["longueur 2,5 ; largeur 4","aire 10 ; périmètre 13"]],
+ checks:["Les nombres décimaux sont acceptés (type Réel).","Le périmètre utilise des parenthèses."],
+ corrige:`Algorithme Rectangle
+Variables
+  longueur, largeur, aire, perimetre : Réel
+Début
+  Écrire("Longueur :")
+  Lire(longueur)
+  Écrire("Largeur :")
+  Lire(largeur)
+  aire ← longueur * largeur
+  perimetre ← 2 * (longueur + largeur)
+  Écrire("Aire : ", aire)
+  Écrire("Périmètre : ", perimetre)
+Fin`,
+ expl:"Sans parenthèses, {2 * longueur + largeur} donnerait un autre résultat, car la multiplication passe avant l'addition. On pourrait écrire le calcul directement dans Écrire, mais garder des variables rend l'algorithme plus lisible."},
+
+{id:"n1-3",lvl:0,titre:"Prix TTC",notions:"Pourcentage · Réel",
+ enonce:"Lis un prix hors taxes en FCFA et un taux de TVA en pourcentage. Affiche le prix toutes taxes comprises.",
+ ex:{e:"10000 FCFA, TVA 18 %",s:"11800 FCFA"},
+ indices:[
+  "Un taux de 18 % correspond au coefficient {18 / 100}.",
+  "Le prix TTC est le prix HT plus la taxe, ou directement {ht * (1 + taux / 100)}."],
+ tests:[["10000 ; 18","11800"],["8000 ; 18","9440"],["2500 ; 0","2500"]],
+ checks:["Un taux de 0 donne bien le prix HT.","Le taux est divisé par 100 avant d'être utilisé."],
+ corrige:`Algorithme PrixTTC
+Variables
+  ht, taux, ttc : Réel
+Début
+  Écrire("Prix HT (FCFA) :")
+  Lire(ht)
+  Écrire("Taux de TVA (%) :")
+  Lire(taux)
+  ttc ← ht * (1 + taux / 100)
+  Écrire("Prix TTC : ", ttc, " FCFA")
+Fin`,
+ expl:"Diviser par 100 transforme un pourcentage en coefficient. Ajouter 1 revient à garder le prix initial et à y ajouter la taxe. Avec un taux nul, le coefficient vaut 1 et le prix ne change pas."},
+
+{id:"n1-4",lvl:0,titre:"Échange de deux valeurs",notions:"Affectation · Variable temporaire",
+ enonce:"Lis deux entiers a et b. Échange leurs contenus sans perdre aucune valeur, puis affiche a et b.",
+ ex:{e:"a = 3, b = 8",s:"a = 8, b = 3"},
+ indices:[
+  "Écrire {a ← b} efface l'ancienne valeur de a. Elle est perdue si tu ne l'as pas mise de côté.",
+  "Utilise une troisième variable pour garder la valeur de a quelques instants.",
+  "Trois affectations suffisent. Déroule-les sur papier avec a = 3 et b = 8."],
+ tests:[["a 3 ; b 8","a = 8 ; b = 3"],["a -1 ; b 0","a = 0 ; b = -1"]],
+ checks:["Aucune valeur n'est écrasée avant d'avoir été copiée.","L'échange fonctionne aussi quand a et b sont égaux."],
+ corrige:`Algorithme Echange
+Variables
+  a, b, tmp : Entier
+Début
+  Lire(a)
+  Lire(b)
+  tmp ← a
+  a ← b
+  b ← tmp
+  Écrire("a = ", a, " ; b = ", b)
+Fin`,
+ expl:"Pour permuter le contenu de deux verres, il faut un troisième verre. Ici {tmp} garde l'ancienne valeur de a pendant que a reçoit celle de b."},
+
+{id:"n1-5",lvl:0,titre:"Secondes en heures",notions:"DIV · MOD",
+ enonce:"Lis un nombre de secondes et affiche cette durée en heures, minutes et secondes.",
+ ex:{e:"3725",s:"1 h 2 min 5 s"},
+ indices:[
+  "Une heure contient 3600 secondes. {DIV} donne le nombre d'heures entières.",
+  "{MOD} donne ce qu'il reste après avoir retiré les heures entières.",
+  "Recommence avec le reste : {DIV 60} donne les minutes, {MOD 60} donne les secondes."],
+ tests:[["3725","1 h 2 min 5 s"],["59","0 h 0 min 59 s"],["7200","2 h 0 min 0 s"]],
+ checks:["Le reste est calculé avant de passer aux minutes.","Moins d'une minute donne bien 0 h 0 min."],
+ corrige:`Algorithme Duree
+Variables
+  total, h, m, s, reste : Entier
+Début
+  Écrire("Nombre de secondes :")
+  Lire(total)
+  h ← total DIV 3600
+  reste ← total MOD 3600
+  m ← reste DIV 60
+  s ← reste MOD 60
+  Écrire(h, " h ", m, " min ", s, " s")
+Fin`,
+ expl:"DIV et MOD fonctionnent comme une division posée à l'école : le quotient d'un côté, le reste de l'autre. On enchaîne deux divisions, chacune travaillant sur le reste de la précédente."},
+
+/* ===== Niveau 2 ===== */
+{id:"n2-1",lvl:1,titre:"Pair ou impair",notions:"Si · MOD",
+ enonce:"Lis un entier et indique s'il est pair ou impair.",
+ ex:{e:"7",s:"impair"},
+ indices:[
+  "Un nombre est pair quand le reste de sa division par 2 vaut 0.",
+  "Compare avec {= 0} plutôt qu'avec {= 1}. Le reste d'un nombre négatif impair peut valoir -1 selon les langages."],
+ tests:[["8","pair"],["7","impair"],["0","pair"],["-3","impair"]],
+ checks:["Le cas 0 est traité correctement.","Les nombres négatifs donnent la bonne réponse."],
+ corrige:`Algorithme PairImpair
+Variables
+  n : Entier
+Début
+  Lire(n)
+  Si n MOD 2 = 0 Alors
+    Écrire("pair")
+  Sinon
+    Écrire("impair")
+  FinSi
+Fin`,
+ expl:"On teste ce qui est sûr : un reste égal à 0 signifie pair, tout le reste est impair. Tester {= 1} raterait les nombres négatifs impairs dans certains langages."},
+
+{id:"n2-2",lvl:1,titre:"Le plus grand de trois",notions:"Si · Comparaisons",
+ enonce:"Lis trois entiers et affiche le plus grand.",
+ ex:{e:"4, 9, 2",s:"9"},
+ indices:[
+  "Garde dans une variable le plus grand nombre vu jusqu'ici.",
+  "Suppose d'abord que le premier nombre est le plus grand, puis compare avec chacun des deux autres."],
+ tests:[["4 ; 9 ; 2","9"],["5 ; 5 ; 1","5"],["-2 ; -7 ; -4","-2"]],
+ checks:["Deux nombres égaux ne posent pas de problème.","Trois nombres négatifs donnent la bonne réponse."],
+ corrige:`Algorithme MaxDeTrois
+Variables
+  a, b, c, max : Entier
+Début
+  Lire(a)
+  Lire(b)
+  Lire(c)
+  max ← a
+  Si b > max Alors
+    max ← b
+  FinSi
+  Si c > max Alors
+    max ← c
+  FinSi
+  Écrire("Le plus grand est ", max)
+Fin`,
+ expl:"Initialiser {max} avec 0 serait une erreur : avec trois nombres négatifs, la réponse serait fausse. Partir du premier nombre évite ce piège. Cette idée de champion provisoire reviendra avec les tableaux."},
+
+{id:"n2-3",lvl:1,titre:"Mention au baccalauréat",notions:"SinonSi · Intervalles",
+ enonce:"Lis une moyenne sur 20 et affiche la mention. Moins de 10 : ajourné. De 10 à moins de 12 : passable. De 12 à moins de 14 : assez bien. De 14 à moins de 16 : bien. 16 et plus : très bien.",
+ ex:{e:"13,5",s:"Assez bien"},
+ indices:[
+  "Teste les seuils en partant du plus haut. Chaque test peut alors se limiter à {note ≥ seuil}.",
+  "Un {SinonSi} n'est examiné que si les tests précédents ont échoué : la borne haute de chaque tranche est déjà garantie."],
+ tests:[["9,5","Ajourné"],["10","Passable"],["13,99","Assez bien"],["14","Bien"],["17","Très bien"]],
+ checks:["Les bornes exactes (10, 12, 14, 16) tombent dans la bonne mention.","Toute la chaîne se termine par un seul FinSi."],
+ corrige:`Algorithme Mention
+Variables
+  note : Réel
+Début
+  Lire(note)
+  Si note ≥ 16 Alors
+    Écrire("Très bien")
+  SinonSi note ≥ 14 Alors
+    Écrire("Bien")
+  SinonSi note ≥ 12 Alors
+    Écrire("Assez bien")
+  SinonSi note ≥ 10 Alors
+    Écrire("Passable")
+  Sinon
+    Écrire("Ajourné")
+  FinSi
+Fin`,
+ expl:"Dans une chaîne de SinonSi, les tests sont examinés dans l'ordre et le premier vrai l'emporte. En allant du seuil le plus haut au plus bas, il n'y a pas besoin d'écrire {note < 16 ET note ≥ 14} : le test précédent a déjà éliminé les notes supérieures."},
+
+{id:"n2-4",lvl:1,titre:"Année bissextile",notions:"ET · OU · Parenthèses",
+ enonce:"Lis une année et indique si elle est bissextile. Elle l'est quand elle est divisible par 4 sans l'être par 100, ou quand elle est divisible par 400.",
+ ex:{e:"2024",s:"bissextile"},
+ indices:[
+  "Il y a deux façons d'être bissextile, reliées par {OU}.",
+  "La première combine deux conditions avec {ET} : divisible par 4 et non divisible par 100.",
+  "Les parenthèses indiquent quel ET et quel OU se calculent ensemble."],
+ tests:[["2024","bissextile"],["1900","pas bissextile"],["2000","bissextile"],["2026","pas bissextile"]],
+ checks:["1900 est correctement refusée.","2000 est correctement acceptée."],
+ corrige:`Algorithme Bissextile
+Variables
+  an : Entier
+Début
+  Lire(an)
+  Si (an MOD 400 = 0) OU (an MOD 4 = 0 ET an MOD 100 ≠ 0) Alors
+    Écrire("bissextile")
+  Sinon
+    Écrire("pas bissextile")
+  FinSi
+Fin`,
+ expl:"Les années séculaires sont des exceptions : 1900 est divisible par 4 et par 100, donc refusée, alors que 2000 est divisible par 400, donc acceptée. Les parenthèses suffisent à regrouper correctement les ET et les OU."},
+
+{id:"n2-5",lvl:1,titre:"Équation du second degré",notions:"Si imbriqués · Racine carrée",
+ enonce:"Lis trois réels a, b et c et résous ax² + bx + c = 0. Si a vaut 0, signale que ce n'est pas une équation du second degré. Sinon calcule le discriminant et affiche les solutions réelles. Tu peux utiliser {racine(x)}.",
+ ex:{e:"a = 1, b = -3, c = 2",s:"deux solutions : 1 et 2"},
+ indices:[
+  "Traite d'abord le cas {a = 0}, puis calcule {delta ← b * b - 4 * a * c}.",
+  "Trois cas selon delta : positif, nul ou négatif.",
+  "Quand delta est positif, les solutions sont {(-b - racine(delta)) / (2 * a)} et {(-b + racine(delta)) / (2 * a)}."],
+ tests:[["1 ; -3 ; 2","deux solutions : 1 et 2"],["1 ; 2 ; 1","solution double : -1"],["1 ; 0 ; 1","aucune solution réelle"],["0 ; 2 ; 4","pas du second degré"]],
+ checks:["Le cas a = 0 est traité avant toute division par a.","Le cas delta = 0 donne une seule solution."],
+ corrige:`Algorithme SecondDegre
+Variables
+  a, b, c, delta, x1, x2 : Réel
+Début
+  Lire(a)
+  Lire(b)
+  Lire(c)
+  Si a = 0 Alors
+    Écrire("Ce n'est pas une équation du second degré")
+  Sinon
+    delta ← b * b - 4 * a * c
+    Si delta > 0 Alors
+      x1 ← (-b - racine(delta)) / (2 * a)
+      x2 ← (-b + racine(delta)) / (2 * a)
+      Écrire("Deux solutions : ", x1, " et ", x2)
+    SinonSi delta = 0 Alors
+      x1 ← -b / (2 * a)
+      Écrire("Solution double : ", x1)
+    Sinon
+      Écrire("Aucune solution réelle")
+    FinSi
+  FinSi
+Fin`,
+ expl:"Le test {a = 0} vient en premier : sans lui, le calcul diviserait par 0. Les Si imbriqués se lisent de l'extérieur vers l'intérieur, et chaque FinSi ferme le Si ouvert le plus récemment."},
+
+/* ===== Niveau 3 ===== */
+{id:"n3-1",lvl:2,titre:"Compter jusqu'à n",notions:"Pour",
+ enonce:"Lis un entier n et affiche tous les entiers de 1 à n, un par ligne.",
+ ex:{e:"5",s:"1 2 3 4 5 (un par ligne)"},
+ indices:[
+  "Quand on connaît le nombre de tours à l'avance, {Pour} est la boucle adaptée.",
+  "{Pour i de 1 à n Faire} … {FinPour} : à chaque tour, i prend la valeur suivante."],
+ tests:[["5","1 2 3 4 5"],["1","1"],["0","rien n'est affiché"]],
+ checks:["Avec n = 0, la boucle ne s'exécute pas.","La variable i n'est pas modifiée à l'intérieur de la boucle."],
+ corrige:`Algorithme Compter
+Variables
+  n, i : Entier
+Début
+  Lire(n)
+  Pour i de 1 à n Faire
+    Écrire(i)
+  FinPour
+Fin`,
+ expl:"Quand la borne de fin est plus petite que celle de départ, la boucle Pour ne s'exécute pas du tout. C'est le comportement attendu pour n = 0."},
+
+{id:"n3-2",lvl:2,titre:"Somme des n premiers entiers",notions:"Accumulateur",
+ enonce:"Lis un entier n et calcule 1 + 2 + … + n sans utiliser de formule.",
+ ex:{e:"4",s:"10"},
+ indices:[
+  "Utilise une variable {somme} qui grossit à chaque tour.",
+  "Initialise {somme} à 0 avant la boucle, sinon elle contient n'importe quoi.",
+  "À chaque tour, ajoute {i} à {somme}."],
+ tests:[["4","10"],["10","55"],["0","0"]],
+ checks:["La somme est initialisée avant la boucle.","L'affichage a lieu après la boucle."],
+ corrige:`Algorithme Somme
+Variables
+  n, i, somme : Entier
+Début
+  Lire(n)
+  somme ← 0
+  Pour i de 1 à n Faire
+    somme ← somme + i
+  FinPour
+  Écrire("Somme : ", somme)
+Fin`,
+ expl:"Un accumulateur est une variable qui se construit pas à pas. On l'initialise avec l'élément neutre de l'opération : 0 pour une somme, 1 pour un produit. Pour vérifier, la formule {n * (n + 1) / 2} donne bien 10 quand n vaut 4."},
+
+{id:"n3-3",lvl:2,titre:"Table de multiplication",notions:"Pour · Affichage",
+ enonce:"Lis un entier et affiche sa table de multiplication de 1 à 10, au format « 7 × 3 = 21 ».",
+ ex:{e:"7",s:"7 × 1 = 7 … 7 × 10 = 70"},
+ indices:[
+  "La boucle compte de 1 à 10, quelle que soit la valeur lue.",
+  "{Écrire} accepte plusieurs éléments, et tu peux y mettre un calcul comme {n * i}."],
+ tests:[["7","7 × 1 = 7 … 7 × 10 = 70"],["0","0 × 1 = 0 … 0 × 10 = 0"]],
+ checks:["La boucle va bien jusqu'à 10 inclus.","Le produit est calculé par l'algorithme, pas écrit à la main."],
+ corrige:`Algorithme Table
+Variables
+  n, i : Entier
+Début
+  Lire(n)
+  Pour i de 1 à 10 Faire
+    Écrire(n, " × ", i, " = ", n * i)
+  FinPour
+Fin`,
+ expl:"Les bornes de la boucle ne dépendent pas de n. Seule l'expression affichée change. Calculer {n * i} directement dans Écrire évite de déclarer une variable de plus."},
+
+{id:"n3-4",lvl:2,titre:"Saisie contrôlée",notions:"Répéter … Jusqu'à",
+ enonce:"Demande une note sur 20 jusqu'à ce que l'utilisateur en donne une valide, c'est-à-dire entre 0 et 20 inclus. Affiche un message à chaque saisie refusée, puis affiche la note retenue.",
+ ex:{e:"25, puis -3, puis 14",s:"deux messages d'erreur, puis « Note retenue : 14 »"},
+ indices:[
+  "On doit demander au moins une fois : {Répéter … Jusqu'à} convient mieux que {TantQue}.",
+  "La condition après {Jusqu'à} décrit quand on s'arrête, donc quand la note est valide.",
+  "Pour le message d'erreur, teste la condition inverse à l'intérieur de la boucle."],
+ tests:[["25 ; -3 ; 14","2 messages d'erreur, puis 14 retenu"],["0","0 retenu, aucun message"],["20","20 retenu, aucun message"]],
+ checks:["Les bornes 0 et 20 sont acceptées.","La boucle s'arrête dès qu'une note valide est lue."],
+ corrige:`Algorithme SaisieNote
+Variables
+  note : Réel
+Début
+  Répéter
+    Écrire("Note sur 20 :")
+    Lire(note)
+    Si note < 0 OU note > 20 Alors
+      Écrire("Valeur invalide, recommence.")
+    FinSi
+  Jusqu'à note ≥ 0 ET note ≤ 20
+  Écrire("Note retenue : ", note)
+Fin`,
+ expl:"Avec Répéter, le corps s'exécute une première fois avant tout test. C'est ce qu'il faut quand on doit lire une valeur pour pouvoir la tester. La condition d'arrêt est l'inverse de la condition d'erreur."},
+
+{id:"n3-5",lvl:2,titre:"Nombre premier",notions:"TantQue · Booléen",
+ enonce:"Lis un entier n supérieur ou égal à 2 et indique s'il est premier. Il suffit de chercher un diviseur d entre 2 et la racine carrée de n.",
+ ex:{e:"17",s:"17 est premier"},
+ indices:[
+  "Un nombre est premier s'il n'a aucun diviseur entre 2 et lui-même exclu.",
+  "Utilise un booléen {premier}, mis à {Vrai} au début et passé à {Faux} si tu trouves un diviseur.",
+  "Inutile d'aller jusqu'à n : {d * d ≤ n} suffit. Ajoute aussi {premier} à la condition pour arrêter la boucle dès qu'un diviseur est trouvé."],
+ tests:[["2","premier"],["15","pas premier"],["17","premier"],["49","pas premier"]],
+ checks:["2 est reconnu comme premier.","49 (7 × 7) est refusé, donc la borne d * d ≤ n est correcte."],
+ corrige:`Algorithme Premier
+Variables
+  n, d : Entier
+  premier : Booléen
+Début
+  Lire(n)
+  premier ← Vrai
+  d ← 2
+  TantQue d * d ≤ n ET premier Faire
+    Si n MOD d = 0 Alors
+      premier ← Faux
+    FinSi
+    d ← d + 1
+  FinTantQue
+  Si premier Alors
+    Écrire(n, " est premier")
+  Sinon
+    Écrire(n, " n'est pas premier")
+  FinSi
+Fin`,
+ expl:"Si n a un diviseur d plus grand que sa racine carrée, il en a aussi un plus petit, n / d. Il suffit donc de tester tant que {d * d ≤ n}. Le booléen {premier} sert de drapeau : il tombe à Faux dès qu'un diviseur est trouvé et arrête la boucle."},
+
+{id:"n3-6",lvl:2,titre:"Suite de Syracuse",notions:"TantQue · Compteur",
+ enonce:"Lis un entier n ≥ 1. Tant que n n'est pas égal à 1, remplace-le par n / 2 s'il est pair, et par 3n + 1 sinon. Affiche chaque valeur, puis le nombre d'étapes effectuées.",
+ ex:{e:"6",s:"6 3 10 5 16 8 4 2 1, soit 8 étapes"},
+ indices:[
+  "Le nombre de tours n'est pas connu à l'avance : utilise {TantQue}.",
+  "À l'intérieur de la boucle, un {Si} sépare le cas pair du cas impair.",
+  "Ajoute une variable {etapes}, initialisée à 0, qui augmente de 1 à chaque tour."],
+ tests:[["6","6 3 10 5 16 8 4 2 1 ; 8 étapes"],["1","1 ; 0 étape"],["7","17 valeurs affichées ; 16 étapes"]],
+ checks:["La première valeur est affichée avant le premier tour.","Pour n = 1, aucune étape n'est comptée."],
+ corrige:`Algorithme Syracuse
+Variables
+  n, etapes : Entier
+Début
+  Lire(n)
+  etapes ← 0
+  Écrire(n)
+  TantQue n ≠ 1 Faire
+    Si n MOD 2 = 0 Alors
+      n ← n DIV 2
+    Sinon
+      n ← 3 * n + 1
+    FinSi
+    Écrire(n)
+    etapes ← etapes + 1
+  FinTantQue
+  Écrire(etapes, " étapes")
+Fin`,
+ expl:"Personne n'a démontré que cette suite atteint 1 pour tout entier de départ : c'est la conjecture de Syracuse. Elle a été vérifiée pour de très grands nombres, mais aucune preuve ne garantit que la boucle TantQue ne tournera jamais à l'infini."},
+
+/* ===== Niveau 4 ===== */
+{id:"n4-1",lvl:3,titre:"Moyenne d'une classe",notions:"Tableau · Parcours",
+ enonce:"Un tableau T contient n notes, aux indices 1 à n. Calcule et affiche leur moyenne.",
+ ex:{e:"T = [12, 15, 9, 18]",s:"moyenne 13,5"},
+ indices:[
+  "Parcours le tableau avec {Pour i de 1 à n} et additionne chaque {T[i]}.",
+  "Divise la somme par n après la boucle, pas dedans.",
+  "Pense au type : une moyenne n'est pas forcément un entier."],
+ tests:[["[12, 15, 9, 18]","13,5"],["[10]","10"],["[0, 20]","10"]],
+ checks:["La somme est initialisée à 0 avant la boucle.","Un tableau d'un seul élément fonctionne."],
+ corrige:`Algorithme MoyenneClasse
+Variables
+  T : Tableau[1..30] de Réel
+  n, i : Entier
+  somme, moyenne : Réel
+Début
+  Lire(n)
+  Pour i de 1 à n Faire
+    Lire(T[i])
+  FinPour
+  somme ← 0
+  Pour i de 1 à n Faire
+    somme ← somme + T[i]
+  FinPour
+  moyenne ← somme / n
+  Écrire("Moyenne : ", moyenne)
+Fin`,
+ expl:"On lit d'abord les notes dans le tableau, puis on le parcourt pour les additionner. Les deux boucles pourraient être fusionnées, mais les séparer rend le rôle de chacune plus clair."},
+
+{id:"n4-2",lvl:3,titre:"Maximum et position",notions:"Tableau · Champion provisoire",
+ enonce:"Un tableau T contient n entiers. Affiche le plus grand et sa position. S'il apparaît plusieurs fois, donne la première position.",
+ ex:{e:"T = [4, 17, 9, 17, 2]",s:"maximum 17, position 2"},
+ indices:[
+  "Reprends l'idée du champion provisoire : mémorise le meilleur et sa position.",
+  "Initialise avec le premier élément, puis parcours à partir de l'indice 2.",
+  "Pour garder la première position, remplace seulement si {T[i]} est strictement supérieur."],
+ tests:[["[4, 17, 9, 17, 2]","maximum 17 ; position 2"],["[5]","maximum 5 ; position 1"],["[-8, -3, -5]","maximum -3 ; position 2"]],
+ checks:["Un tableau de nombres négatifs donne la bonne réponse.","Une valeur égale ne remplace pas le champion actuel."],
+ corrige:`Algorithme MaxTableau
+Variables
+  T : Tableau[1..50] de Entier
+  n, i, max, pos : Entier
+Début
+  Lire(n)
+  Pour i de 1 à n Faire
+    Lire(T[i])
+  FinPour
+  max ← T[1]
+  pos ← 1
+  Pour i de 2 à n Faire
+    Si T[i] > max Alors
+      max ← T[i]
+      pos ← i
+    FinSi
+  FinPour
+  Écrire("Maximum : ", max, " à la position ", pos)
+Fin`,
+ expl:"Partir de {T[1]} plutôt que de 0 évite l'erreur avec des valeurs négatives. L'inégalité stricte garde la première occurrence. Avec {≥}, on obtiendrait la dernière."},
+
+{id:"n4-3",lvl:3,titre:"Compter les occurrences",notions:"Fonction · Paramètres",
+ enonce:"Écris une fonction {compter(T, n, x)} qui renvoie le nombre de fois où la valeur x apparaît parmi les n premiers éléments du tableau T.",
+ ex:{e:"T = [3, 7, 3, 3, 9], x = 3",s:"3"},
+ indices:[
+  "Une fonction se termine par {Retourner}. Ici elle renvoie un entier.",
+  "Utilise un compteur initialisé à 0 et augmente-le à chaque fois que {T[i] = x}.",
+  "{Retourner} doit se trouver après la boucle, pas dedans, sinon la fonction s'arrête au premier tour."],
+ tests:[["T = [3, 7, 3, 3, 9] ; x = 3","3"],["T = [3, 7, 3, 3, 9] ; x = 5","0"],["T = [2] ; x = 2","1"]],
+ checks:["Retourner est placé après la boucle.","Une valeur absente donne 0."],
+ corrige:`Fonction compter(T : Tableau d'Entier, n : Entier, x : Entier) : Entier
+Variables
+  i, nb : Entier
+Début
+  nb ← 0
+  Pour i de 1 à n Faire
+    Si T[i] = x Alors
+      nb ← nb + 1
+    FinSi
+  FinPour
+  Retourner nb
+FinFonction`,
+ expl:"Une fonction reçoit des paramètres et renvoie une seule valeur. Dès que Retourner s'exécute, la fonction se termine : placé dans la boucle, il l'interromprait au premier passage. Les variables i et nb n'existent que dans la fonction."},
+
+{id:"n4-4",lvl:3,titre:"Inverser un tableau",notions:"Tableau · Échange",
+ enonce:"Écris une procédure {inverser(T, n)} qui retourne le tableau sur place : le premier élément devient le dernier, et ainsi de suite. N'utilise pas de second tableau.",
+ ex:{e:"[1, 2, 3, 4, 5]",s:"[5, 4, 3, 2, 1]"},
+ indices:[
+  "L'élément à l'indice i doit échanger sa place avec celui à l'indice {n + 1 - i}.",
+  "Reprends l'échange à trois affectations de l'exercice « Échange de deux valeurs ».",
+  "Si tu parcours tout le tableau, tu remets tout en place. Jusqu'où faut-il aller ?"],
+ tests:[["[1, 2, 3, 4, 5]","[5, 4, 3, 2, 1]"],["[1, 2, 3, 4]","[4, 3, 2, 1]"],["[7]","[7]"]],
+ checks:["La boucle s'arrête à la moitié du tableau.","Dans un tableau de taille impaire, l'élément central reste en place."],
+ corrige:`Procédure inverser(T : Tableau d'Entier, n : Entier)
+Variables
+  i, tmp : Entier
+Début
+  Pour i de 1 à n DIV 2 Faire
+    tmp ← T[i]
+    T[i] ← T[n + 1 - i]
+    T[n + 1 - i] ← tmp
+  FinPour
+FinProcédure`,
+ expl:"Chaque tour échange une paire d'éléments symétriques. Il y a {n DIV 2} paires : pour n = 5, deux échanges suffisent et l'élément du milieu ne bouge pas. Aller jusqu'à n annulerait le travail en échangeant chaque paire une deuxième fois."},
+
+{id:"n4-5",lvl:3,titre:"Palindrome",notions:"Chaîne · Fonction booléenne",
+ enonce:"Écris une fonction {estPalindrome(mot)} qui renvoie Vrai si le mot se lit de la même façon dans les deux sens, comme radar ou kayak.",
+ ex:{e:"radar",s:"Vrai"},
+ indices:[
+  "{longueur(mot)} donne le nombre de caractères et {mot[i]} le i-ème caractère, en partant de 1.",
+  "Compare le premier caractère avec le dernier, le deuxième avec l'avant-dernier, et ainsi de suite.",
+  "Dès qu'une paire diffère, tu peux renvoyer {Faux} immédiatement. Renvoie {Vrai} seulement après la boucle."],
+ tests:[["radar","Vrai"],["kayak","Vrai"],["algo","Faux"],["a","Vrai"]],
+ checks:["Retourner Vrai est placé après la boucle.","Un mot d'une seule lettre est un palindrome."],
+ corrige:`Fonction estPalindrome(mot : Chaîne) : Booléen
+Variables
+  i, n : Entier
+Début
+  n ← longueur(mot)
+  Pour i de 1 à n DIV 2 Faire
+    Si mot[i] ≠ mot[n + 1 - i] Alors
+      Retourner Faux
+    FinSi
+  FinPour
+  Retourner Vrai
+FinFonction`,
+ expl:"Comme pour l'inversion d'un tableau, on compare des positions symétriques et on s'arrête à la moitié. Retourner Faux sort de la fonction dès la première différence. Retourner Vrai n'est atteint que si aucune paire n'a échoué."},
+
+/* ===== Niveau 5 ===== */
+{id:"n5-1",lvl:4,titre:"Recherche dichotomique",notions:"TantQue · Tableau trié",
+ enonce:"Écris une fonction {dichotomie(T, n, x)} qui cherche x dans un tableau T trié par ordre croissant et renvoie sa position, ou 0 s'il n'y est pas. À chaque étape, examine l'élément du milieu et élimine la moitié du tableau. Les tests utilisent T = [2, 5, 8, 12, 16, 23, 38].",
+ ex:{e:"T = [2, 5, 8, 12, 16, 23, 38], x = 23",s:"6"},
+ indices:[
+  "Garde deux bornes, {bas} et {haut}, qui encadrent la zone où x peut encore se trouver.",
+  "Le milieu est {(bas + haut) DIV 2}. Compare {T[milieu]} avec x.",
+  "Si {T[milieu] < x}, la réponse est à droite : {bas} passe à {milieu + 1}. Sinon elle est à gauche : {haut} passe à {milieu - 1}.",
+  "Arrête-toi quand {bas} dépasse {haut} : x est absent."],
+ tests:[["x = 23","6"],["x = 2","1"],["x = 38","7"],["x = 7","0"]],
+ checks:["La boucle s'arrête quand bas dépasse haut.","Le premier et le dernier élément sont bien trouvés."],
+ corrige:`Fonction dichotomie(T : Tableau d'Entier, n : Entier, x : Entier) : Entier
+Variables
+  bas, haut, milieu : Entier
+Début
+  bas ← 1
+  haut ← n
+  TantQue bas ≤ haut Faire
+    milieu ← (bas + haut) DIV 2
+    Si T[milieu] = x Alors
+      Retourner milieu
+    SinonSi T[milieu] < x Alors
+      bas ← milieu + 1
+    Sinon
+      haut ← milieu - 1
+    FinSi
+  FinTantQue
+  Retourner 0
+FinFonction`,
+ expl:"Chaque tour divise par deux la zone de recherche. Pour un million d'éléments, une vingtaine de tours suffisent, contre un million dans une recherche élément par élément. Cela ne marche que si le tableau est trié."},
+
+{id:"n5-2",lvl:4,titre:"Tri par sélection",notions:"Boucles imbriquées · Tri",
+ enonce:"Écris une procédure {triSelection(T, n)} qui trie le tableau T par ordre croissant. À chaque étape, cherche le plus petit élément de la partie non triée et place-le au début de cette partie.",
+ ex:{e:"[5, 2, 9, 1]",s:"[1, 2, 5, 9]"},
+ indices:[
+  "La boucle extérieure fixe la position {i} à remplir. Tout ce qui précède {i} est déjà trié.",
+  "La boucle intérieure cherche, de {i + 1} à n, la position du plus petit élément. C'est le même principe que pour le maximum, à l'envers.",
+  "Une fois la position trouvée, échange {T[i]} avec ce plus petit élément."],
+ tests:[["[5, 2, 9, 1]","[1, 2, 5, 9]"],["[3, 3, 1]","[1, 3, 3]"],["[4]","[4]"]],
+ checks:["La boucle extérieure va jusqu'à n - 1.","Un tableau déjà trié reste inchangé."],
+ corrige:`Procédure triSelection(T : Tableau d'Entier, n : Entier)
+Variables
+  i, j, posMin, tmp : Entier
+Début
+  Pour i de 1 à n - 1 Faire
+    posMin ← i
+    Pour j de i + 1 à n Faire
+      Si T[j] < T[posMin] Alors
+        posMin ← j
+      FinSi
+    FinPour
+    Si posMin ≠ i Alors
+      tmp ← T[i]
+      T[i] ← T[posMin]
+      T[posMin] ← tmp
+    FinSi
+  FinPour
+FinProcédure`,
+ expl:"Après l'étape i, les i premières cases contiennent les i plus petits éléments dans le bon ordre. La dernière case est alors forcément correcte, c'est pourquoi la boucle extérieure s'arrête à n - 1. Le temps de calcul croît avec le carré de n : c'est bien pour apprendre, trop lent pour de très grands tableaux."},
+
+{id:"n5-3",lvl:4,titre:"PGCD d'Euclide",notions:"TantQue · Fonction",
+ enonce:"Écris une fonction {pgcd(a, b)} qui renvoie le plus grand diviseur commun de deux entiers positifs avec l'algorithme d'Euclide : tant que b n'est pas nul, remplace (a, b) par (b, a MOD b).",
+ ex:{e:"a = 48, b = 18",s:"6"},
+ indices:[
+  "Le reste r de a par b se calcule avec {MOD}.",
+  "À chaque tour, a prend l'ancienne valeur de b, et b prend le reste. Attention à l'ordre des affectations.",
+  "Quand b vaut 0, le PGCD est a."],
+ tests:[["48 ; 18","6"],["17 ; 5","1"],["12 ; 0","12"]],
+ checks:["Le reste est calculé avant de modifier a et b.","pgcd(12, 0) renvoie 12."],
+ corrige:`Fonction pgcd(a : Entier, b : Entier) : Entier
+Variables
+  r : Entier
+Début
+  TantQue b ≠ 0 Faire
+    r ← a MOD b
+    a ← b
+    b ← r
+  FinTantQue
+  Retourner a
+FinFonction`,
+ expl:"Un diviseur commun de a et b divise aussi le reste de a par b. Le couple (b, a MOD b) a donc le même PGCD que (a, b), avec des valeurs plus petites. La boucle se termine toujours, car le reste diminue jusqu'à atteindre 0."},
+
+{id:"n5-4",lvl:4,titre:"Factorielle récursive",notions:"Récursivité",
+ enonce:"Écris une fonction récursive {factorielle(n)} qui renvoie n! = 1 × 2 × … × n, avec 0! = 1. Une fonction récursive s'appelle elle-même : n'utilise aucune boucle.",
+ ex:{e:"5",s:"120"},
+ indices:[
+  "Une fonction récursive a besoin d'un cas de base qui s'arrête sans s'appeler elle-même.",
+  "Ici le cas de base est {n = 0} : la factorielle vaut 1.",
+  "Pour n > 0, n! = n × (n - 1)!. Appelle {factorielle(n - 1)}."],
+ tests:[["0","1"],["5","120"],["10","3628800"]],
+ checks:["Il existe un cas de base qui ne rappelle pas la fonction.","L'argument de l'appel récursif se rapproche du cas de base."],
+ corrige:`Fonction factorielle(n : Entier) : Entier
+Début
+  Si n = 0 Alors
+    Retourner 1
+  Sinon
+    Retourner n * factorielle(n - 1)
+  FinSi
+FinFonction`,
+ expl:"factorielle(3) attend factorielle(2), qui attend factorielle(1), qui attend factorielle(0), égale à 1. Les résultats remontent ensuite : 1, puis 1 × 1, puis 2 × 1, puis 3 × 2 = 6. Sans cas de base, ou avec un argument qui ne diminue pas, les appels ne s'arrêteraient jamais."},
+
+{id:"n5-5",lvl:4,titre:"Décimal vers binaire",notions:"TantQue · Chaînes",
+ enonce:"Écris une fonction {enBinaire(n)} qui renvoie l'écriture binaire de l'entier n ≥ 0 sous forme de chaîne. Divise n par 2 à répétition et garde les restes.",
+ ex:{e:"10",s:"1010"},
+ indices:[
+  "Le dernier chiffre binaire est {n MOD 2}. Le reste du nombre s'obtient avec {n DIV 2}.",
+  "Répète tant que n est supérieur à 0.",
+  "Les restes sortent du dernier chiffre au premier : place chaque nouveau chiffre à gauche de la chaîne déjà construite.",
+  "{texte(x)} convertit un nombre en chaîne et {&} concatène deux chaînes."],
+ tests:[["10","1010"],["5","101"],["255","11111111"],["0","0"]],
+ checks:["Le cas n = 0 renvoie bien 0.","Les chiffres sont dans le bon ordre : le dernier reste devient le premier chiffre."],
+ corrige:`Fonction enBinaire(n : Entier) : Chaîne
+Variables
+  res : Chaîne
+Début
+  Si n = 0 Alors
+    Retourner "0"
+  FinSi
+  res ← ""
+  TantQue n > 0 Faire
+    res ← texte(n MOD 2) & res
+    n ← n DIV 2
+  FinTantQue
+  Retourner res
+FinFonction`,
+ expl:"Chaque division par 2 isole le chiffre binaire le plus à droite. Comme on les découvre de la droite vers la gauche, on les ajoute devant la chaîne. Le cas 0 est traité à part : sinon la boucle ne s'exécuterait pas et la chaîne resterait vide."},
+
+{id:"n5-6",lvl:4,titre:"Tours de Hanoï",notions:"Récursivité · Procédure",
+ enonce:"Trois tiges A, B et C. Sur A sont empilés n disques de tailles décroissantes. Écris une procédure récursive {hanoi(n, depart, arrivee, aide)} qui affiche les déplacements pour transférer la pile de A vers C, un disque à la fois, sans jamais poser un disque sur un plus petit.",
+ ex:{e:"n = 2, de A vers C",s:"A → B, A → C, B → C"},
+ indices:[
+  "Pour n = 0 il n'y a rien à faire : c'est ton cas de base.",
+  "Pour déplacer n disques, il faut d'abord libérer le plus grand : déplace n - 1 disques vers la tige d'aide.",
+  "Déplace ensuite le plus grand disque vers l'arrivée, puis ramène les n - 1 disques de la tige d'aide vers l'arrivée.",
+  "Le rôle des trois tiges change entre les deux appels récursifs. Écris-les dans le bon ordre."],
+ tests:[["n = 1","A → C"],["n = 2","A → B ; A → C ; B → C"],["n = 3","7 déplacements"]],
+ checks:["Le cas n = 0 ne fait rien.","Pour n disques, le nombre de déplacements vaut 2^n - 1."],
+ corrige:`Procédure hanoi(n : Entier, depart, arrivee, aide : Chaîne)
+Début
+  Si n > 0 Alors
+    hanoi(n - 1, depart, aide, arrivee)
+    Écrire(depart, " → ", arrivee)
+    hanoi(n - 1, aide, arrivee, depart)
+  FinSi
+FinProcédure`,
+ expl:"Pour déplacer n disques, on déplace n - 1 disques vers la tige d'aide, on déplace le plus grand, puis on replace les n - 1 disques dessus. Chaque appel résout un problème plus petit d'un disque. Le nombre de déplacements double presque à chaque disque : 2^n - 1, soit plus d'un million pour 20 disques."}
+];
+
+var MEMO=[
+ {t:"Structure d'un algorithme",c:"Algorithme NomDeLAlgo\nVariables\n  a, b : Entier\n  nom : Chaîne\nDébut\n  // les instructions, une par ligne\nFin",n:"Les commentaires commencent par //. Types disponibles : Entier, Réel, Booléen (Vrai ou Faux), Chaîne, Caractère."},
+ {t:"Affectation et opérateurs",c:"x ← 5\ny ← x * 2 + 1\nq ← 17 DIV 5      // 3, quotient entier\nr ← 17 MOD 5      // 2, reste",n:"La flèche se lit « prend la valeur ». Le signe = sert uniquement à comparer."},
+ {t:"Comparaisons et logique",c:"a = b    a ≠ b    a < b\na ≤ b    a > b    a ≥ b\n(a > 0) ET (b > 0)\n(a < 0) OU (b < 0)\nNON (a = b)",n:"Utilise des parenthèses dès que tu mélanges ET et OU."},
+ {t:"Lire et écrire",c:"Lire(age)\nÉcrire(\"Tu as \", age, \" ans\")",n:"Écrire accepte du texte, des variables et des calculs, séparés par des virgules."},
+ {t:"Condition",c:"Si note ≥ 10 Alors\n  Écrire(\"Admis\")\nSinonSi note ≥ 8 Alors\n  Écrire(\"Rattrapage\")\nSinon\n  Écrire(\"Ajourné\")\nFinSi",n:"SinonSi et Sinon sont facultatifs. Un seul FinSi ferme toute la chaîne."},
+ {t:"Boucles",c:"Pour i de 1 à 10 Faire\n  Écrire(i)\nFinPour\n\nTantQue n > 0 Faire\n  n ← n DIV 10\nFinTantQue\n\nRépéter\n  Lire(x)\nJusqu'à x > 0",n:"Pour quand on connaît le nombre de tours. TantQue teste avant d'entrer et peut ne jamais s'exécuter. Répéter s'exécute au moins une fois."},
+ {t:"Tableaux et chaînes",c:"T : Tableau[1..10] de Entier\nT[1] ← 42\nÉcrire(T[i])\n\nmot ← \"radar\"\nlongueur(mot)      // 5\nmot[1]             // premier caractère\ntexte(12) & \"ab\"    // \"12ab\"",n:"Les indices commencent à 1. Un tableau passé à une fonction ou à une procédure est modifié sur place."},
+ {t:"Fonctions et procédures",c:"Fonction carre(x : Entier) : Entier\nDébut\n  Retourner x * x\nFinFonction\n\nProcédure saluer(prenom : Chaîne)\nDébut\n  Écrire(\"Bonjour \", prenom)\nFinProcédure",n:"Une fonction renvoie une valeur avec Retourner, une procédure non. Fonctions prêtes à l'emploi : racine(x), longueur(mot), texte(x)."}
+];
+
+var LESSONS=[
+/* ===== Leçon 1 ===== */
+{titre:"Variables et calculs",resume:"Ce qu'est un algorithme, comment ranger une valeur dans une variable, puis la lire ou l'afficher.",
+ blocs:[
+  {p:"Un algorithme est une suite d'instructions précises qui mène à un résultat. Le pseudo-code l'écrit presque en français, sans dépendre d'un langage de programmation. L'ordinateur exécute les instructions une par une, dans l'ordre où elles sont écrites."},
+  {h:"Une variable est une boîte nommée"},
+  {p:"Une variable a un nom, un type et une valeur. On la déclare dans la section {Variables}, avant de l'utiliser."},
+  {code:`Variables
+  age : Entier
+  taille : Réel
+  prenom : Chaîne
+  majeur : Booléen`},
+  {list:["{Entier} : un nombre sans virgule, comme 12 ou -3.","{Réel} : un nombre avec virgule, comme 1,75.","{Chaîne} : un texte, écrit entre guillemets, comme « Awa ».","{Booléen} : {Vrai} ou {Faux}."]},
+  {h:"Affectation : ranger une valeur"},
+  {p:"La flèche {←} range une valeur dans une variable et efface l'ancienne. Le calcul à droite est fait en premier, puis le résultat est rangé à gauche."},
+  {code:`age ← 17
+age ← age + 1      // age vaut maintenant 18`},
+  {p:"{age ← age + 1} n'est pas une égalité mathématique. Cela veut dire : prends la valeur actuelle de age, ajoute 1, range le résultat dans age."},
+  {h:"Lire et écrire"},
+  {code:`Écrire("Quel âge as-tu ?")
+Lire(age)
+Écrire("L'an prochain, tu auras ", age + 1, " ans")`},
+  {p:"{Écrire} affiche des éléments séparés par des virgules. {Lire} attend que l'utilisateur tape une valeur et la range dans la variable."},
+  {h:"Quotient et reste"},
+  {code:`q ← 17 DIV 5      // 3, combien de fois 5 tient dans 17
+r ← 17 MOD 5      // 2, ce qui reste`},
+  {p:"{DIV} et {MOD} servent partout : convertir des secondes en heures, tester si un nombre est pair, extraire les chiffres d'un nombre."},
+  {tip:{t:"Pièges fréquents",items:["Utiliser une variable avant de lui avoir donné une valeur.","Confondre {←} (ranger une valeur) et {=} (comparer deux valeurs).","Oublier les guillemets autour d'un texte, ou en mettre autour d'un nom de variable."]}},
+  {retenir:["Une variable a un nom, un type et une valeur.","{←} range une valeur et efface la précédente.","Les instructions s'exécutent dans l'ordre, de haut en bas.","{DIV} donne le quotient entier, {MOD} le reste."]}
+ ]},
+
+/* ===== Leçon 2 ===== */
+{titre:"Faire des choix",resume:"Exécuter des instructions seulement si une condition est vraie, et combiner plusieurs conditions.",
+ blocs:[
+  {p:"Sans condition, un algorithme fait toujours la même chose. Avec {Si}, il choisit selon la situation."},
+  {h:"Si, Alors, Sinon"},
+  {code:`Si temperature > 30 Alors
+  Écrire("Il fait chaud")
+Sinon
+  Écrire("Température agréable")
+FinSi`},
+  {p:"Le bloc après {Alors} s'exécute si la condition est vraie, le bloc après {Sinon} dans le cas contraire. {Sinon} est facultatif. Tout {Si} se termine par {FinSi}."},
+  {h:"Plusieurs cas avec SinonSi"},
+  {code:`Si note ≥ 16 Alors
+  Écrire("Très bien")
+SinonSi note ≥ 10 Alors
+  Écrire("Admis")
+Sinon
+  Écrire("Ajourné")
+FinSi`},
+  {p:"Les conditions sont examinées dans l'ordre. Dès que l'une est vraie, son bloc s'exécute et les suivantes sont ignorées. L'ordre compte : une note de 17 est comparée à 16 avant de l'être à 10."},
+  {h:"Combiner des conditions"},
+  {list:["{A ET B} est vrai seulement si A et B sont vrais.","{A OU B} est faux seulement si A et B sont faux.","{NON A} inverse la valeur de A."]},
+  {code:`Si (age ≥ 18) ET (permis = Vrai) Alors
+  Écrire("Tu peux conduire")
+FinSi`},
+  {p:"Mets des parenthèses autour de chaque comparaison, surtout quand tu mélanges ET et OU."},
+  {h:"Tester les cas limites"},
+  {p:"Pour chaque condition, essaie une valeur juste avant le seuil, une valeur exactement sur le seuil et une valeur juste après. La plupart des erreurs se cachent là, par exemple un {>} qui aurait dû être un {≥}."},
+  {table:{head:["Condition","Valeurs à tester"],rows:[["note ≥ 10","9 ; 10 ; 11"],["n MOD 2 = 0","0 ; 1 ; 2 ; -3"],["an MOD 4 = 0","2023 ; 2024 ; 2025"]]}},
+  {tip:{t:"Pièges fréquents",items:["Écrire {=} là où il faut {≠}, ou l'inverse.","Mettre les SinonSi dans le mauvais ordre : le premier test vrai l'emporte.","Oublier le FinSi, ou en mettre un pour chaque SinonSi."]}},
+  {retenir:["{Si … Alors … Sinon … FinSi} choisit entre des blocs.","Les SinonSi sont examinés dans l'ordre, le premier vrai gagne.","{ET}, {OU} et {NON} combinent des conditions : utilise des parenthèses.","Teste toujours juste avant, sur et juste après chaque seuil."]}
+ ]},
+
+/* ===== Leçon 3 ===== */
+{titre:"Répéter avec les boucles",resume:"Choisir entre Pour, TantQue et Répéter, et suivre une boucle à la main.",
+ blocs:[
+  {p:"Une boucle répète un bloc d'instructions. Le bon choix dépend de ce que tu sais à l'avance."},
+  {table:{head:["Boucle","Quand l'utiliser"],rows:[["Pour","Le nombre de tours est connu à l'avance."],["TantQue","On répète tant qu'une condition est vraie. Le corps peut ne jamais s'exécuter."],["Répéter … Jusqu'à","On répète jusqu'à ce qu'une condition soit vraie. Le corps s'exécute au moins une fois."]]}},
+  {h:"La boucle Pour"},
+  {code:`Pour i de 1 à 5 Faire
+  Écrire(i)
+FinPour
+
+Pour i de 10 à 0 pas -2 Faire
+  Écrire(i)     // 10, 8, 6, 4, 2, 0
+FinPour`},
+  {p:"La variable {i} change toute seule à chaque tour : ne la modifie pas dans la boucle. Sans {pas}, elle augmente de 1."},
+  {h:"Compteurs et accumulateurs"},
+  {p:"Presque toutes les boucles font évoluer une variable. Un compteur compte, un accumulateur additionne ou multiplie. Initialise-les avant la boucle."},
+  {code:`somme ← 0
+Pour i de 1 à n Faire
+  somme ← somme + i
+FinPour`},
+  {h:"La boucle TantQue"},
+  {code:`nb ← 0
+TantQue n > 0 Faire
+  n ← n DIV 10
+  nb ← nb + 1
+FinTantQue`},
+  {p:"Cette boucle compte les chiffres d'un entier positif. Le test est fait avant chaque tour : si la condition est fausse dès le départ, le corps ne s'exécute jamais."},
+  {h:"La boucle Répéter … Jusqu'à"},
+  {code:`Répéter
+  Lire(age)
+Jusqu'à age ≥ 0 ET age ≤ 120`},
+  {p:"Pratique pour contrôler une saisie : il faut lire au moins une fois avant de pouvoir tester."},
+  {h:"Suivre l'exécution à la main"},
+  {p:"Pour comprendre ou corriger une boucle, fais un tableau de suivi : une colonne par variable, une ligne par tour. Voici la somme des entiers de 1 à 3."},
+  {table:{head:["Étape","i","somme"],rows:[["Avant la boucle","–","0"],["Tour 1","1","1"],["Tour 2","2","3"],["Tour 3","3","6"]]}},
+  {tip:{t:"Pièges fréquents",items:["Boucle infinie : dans un TantQue, une instruction doit rapprocher la condition de devenir fausse.","Oublier d'initialiser l'accumulateur avant la boucle.","Se tromper d'une unité sur la borne : de 1 à n fait n tours, de 0 à n en fait n + 1."]}},
+  {retenir:["{Pour} quand le nombre de tours est connu, {TantQue} quand il dépend d'une condition.","{Répéter} s'exécute au moins une fois.","Initialise compteurs et accumulateurs avant la boucle.","Un tableau de suivi révèle la plupart des erreurs."]}
+ ]},
+
+/* ===== Leçon 4 ===== */
+{titre:"Tableaux et fonctions",resume:"Ranger plusieurs valeurs sous un même nom, les parcourir, et découper un problème en fonctions.",
+ blocs:[
+  {p:"Les tableaux regroupent plusieurs valeurs du même type sous un seul nom. Les fonctions découpent un problème en morceaux réutilisables."},
+  {h:"Tableaux"},
+  {p:"Un tableau est une rangée de cases numérotées. Dans ce cours, les indices commencent à 1."},
+  {code:`T : Tableau[1..5] de Entier
+T[1] ← 12
+T[2] ← 7
+Écrire(T[2])      // 7`},
+  {h:"Parcourir un tableau"},
+  {code:`Pour i de 1 à n Faire
+  Écrire(T[i])
+FinPour`},
+  {p:"Presque tous les algorithmes sur les tableaux reprennent ce parcours avec une petite variation."},
+  {table:{head:["Objectif","Idée"],rows:[["Somme ou moyenne","Un accumulateur qui additionne chaque T[i]."],["Maximum","Un champion provisoire, remplacé quand T[i] le dépasse."],["Compter","Un compteur qui augmente quand T[i] vérifie la condition."],["Chercher","Retourner dès qu'on trouve. Conclure « absent » seulement après toute la boucle."]]}},
+  {h:"Fonctions et procédures"},
+  {p:"Une fonction a un nom, des paramètres, et renvoie une valeur avec {Retourner}. Une procédure agit sans renvoyer de valeur."},
+  {code:`Fonction carre(x : Entier) : Entier
+Début
+  Retourner x * x
+FinFonction
+
+// dans l'algorithme principal
+y ← carre(7)      // y vaut 49`},
+  {p:"Les variables déclarées dans une fonction sont locales : elles n'existent que pendant l'appel. Un tableau passé en paramètre, lui, est modifié sur place."},
+  {h:"Chaînes de caractères"},
+  {p:"Une chaîne se parcourt comme un tableau de caractères : {longueur(mot)} donne sa taille et {mot[i]} le i-ème caractère."},
+  {tip:{t:"Pièges fréquents",items:["Sortir du tableau : l'indice valide va de 1 à n, jamais 0 ni n + 1.","Placer {Retourner} trop tôt dans une boucle : la fonction s'arrête au premier tour.","Initialiser le maximum à 0 : c'est faux si toutes les valeurs sont négatives."]}},
+  {retenir:["Les indices vont de 1 à n.","Parcours, accumulateur, champion provisoire : trois motifs à reconnaître.","Une fonction reçoit des paramètres et renvoie une valeur avec {Retourner}.","Les variables d'une fonction sont locales."]}
+ ]},
+
+/* ===== Leçon 5 ===== */
+{titre:"Efficacité et récursivité",resume:"Comparer des solutions, découper un problème en plus petit, et une méthode pour attaquer un énoncé.",
+ blocs:[
+  {p:"Tu as maintenant les outils de base. Ce niveau apprend à comparer des solutions et à choisir une stratégie."},
+  {h:"Combien d'opérations ?"},
+  {p:"Deux algorithmes peuvent donner le même résultat sans prendre le même temps. On compte les opérations en fonction de la taille n des données."},
+  {table:{head:["Algorithme","Opérations pour n = 1 000 000 (ordre de grandeur)"],rows:[["Recherche élément par élément","1 000 000"],["Recherche dichotomique","20"],["Tri par sélection","500 milliards"]]}},
+  {p:"La dichotomie est très rapide, mais elle exige un tableau trié. Trier coûte lui-même du temps : cela vaut la peine quand on cherche souvent."},
+  {h:"Diviser pour régner"},
+  {p:"La dichotomie élimine la moitié des possibilités à chaque tour. Retiens sa structure : un milieu calculé avec {(bas + haut) DIV 2}, et deux bornes qui se resserrent jusqu'à se croiser."},
+  {h:"Récursivité"},
+  {p:"Une fonction récursive s'appelle elle-même sur un problème plus petit. Elle a besoin de deux ingrédients : un cas de base qui s'arrête, et un appel qui se rapproche de ce cas."},
+  {code:`Fonction puissance(x : Réel, n : Entier) : Réel
+Début
+  Si n = 0 Alors
+    Retourner 1
+  Sinon
+    Retourner x * puissance(x, n - 1)
+  FinSi
+FinFonction`},
+  {p:"Pour {puissance(2, 3)} : 2 × puissance(2, 2), puis 2 × 2 × puissance(2, 1), jusqu'à puissance(2, 0) qui vaut 1. Le résultat est 8. Cette fonction suppose n ≥ 0."},
+  {p:"Tout algorithme récursif peut s'écrire avec une boucle. La récursivité est surtout naturelle quand le problème se découpe en sous-problèmes identiques, comme les tours de Hanoï."},
+  {h:"Une méthode pour attaquer un problème"},
+  {steps:["Reformule l'énoncé avec tes mots et un exemple.","Résous un petit cas à la main, en notant chaque étape.","Écris l'idée en une phrase avant le pseudo-code.","Écris le pseudo-code, puis déroule-le sur ton exemple.","Teste les cas limites : tableau vide ou à un élément, zéro, nombres négatifs, doublons."]},
+  {tip:{t:"Pièges fréquents",items:["Récursivité sans cas de base, ou dont l'argument ne se rapproche pas du cas de base.","Dichotomie sur un tableau qui n'est pas trié.","Échange de deux cases sans variable temporaire : une valeur est perdue."]}},
+  {retenir:["Compare les algorithmes par le nombre d'opérations, pas par l'impression de vitesse.","La dichotomie demande un tableau trié.","Une fonction récursive a un cas de base et un appel qui s'en rapproche.","Résous un petit cas à la main avant d'écrire le pseudo-code."]}
+ ]}
+];
+
+var SNIPPETS={
+ algo:"Algorithme ¦\nVariables\n  \nDébut\n  \nFin",
+ arrow:" ← ", neq:" ≠ ", leq:" ≤ ", geq:" ≥ ",
+ si:"Si ¦ Alors\n  \nFinSi",
+ sinon:"Sinon\n  ¦",
+ pour:"Pour i de 1 à ¦ Faire\n  \nFinPour",
+ tq:"TantQue ¦ Faire\n  \nFinTantQue",
+ rep:"Répéter\n  \nJusqu'à ¦",
+ lire:"Lire(¦)",
+ ecrire:"Écrire(¦)",
+ fonc:"Fonction ¦() : Entier\nVariables\n  \nDébut\n  \nFinFonction",
+ ret:"Retourner ¦"
+};
+var CHIPS=[["algo","Algorithme"],["arrow","←"],["neq","≠"],["leq","≤"],["geq","≥"],["si","Si"],["sinon","Sinon"],["pour","Pour"],["tq","TantQue"],["rep","Répéter"],["lire","Lire"],["ecrire","Écrire"],["fonc","Fonction"],["ret","Retourner"]];
+
+/* ---------- Utilitaires ---------- */
+var esc=function(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");};
+var fmt=function(s){return esc(s).replace(/\{([^}]+)\}/g,"<code>$1</code>");};
+
+var KW={};["Algorithme","Variables","Constantes","Début","Fin","Si","Alors","Sinon","SinonSi","FinSi","Pour","de","à","pas","Faire","FinPour","TantQue","FinTantQue","Répéter","Fonction","FinFonction","Procédure","FinProcédure","Retourner","Lire","Écrire","ET","OU","NON","MOD","DIV"].forEach(function(w){KW[w]=1;});
+var TY={};["Entier","Réel","Booléen","Chaîne","Caractère","Tableau"].forEach(function(w){TY[w]=1;});
+var TOKEN=/"[^"]*"|Jusqu['’]à|\d+(?:[.,]\d+)?|[A-Za-zÀ-ÿ_][A-Za-zÀ-ÿ_0-9]*|[←→]/g;
+
+function hl(code){
+  return code.split("\n").map(function(line){
+    var com="",i=line.indexOf("//");
+    if(i>=0){com=line.slice(i);line=line.slice(0,i);}
+    var out=esc(line).replace(TOKEN,function(t){
+      if(t.charAt(0)==='"') return '<span class="t-str">'+t+'</span>';
+      if(t==="←"||t==="→") return '<span class="t-op">'+t+'</span>';
+      if(/^\d/.test(t)) return '<span class="t-num">'+t+'</span>';
+      if(/^Jusqu/.test(t)||KW[t]) return '<span class="t-kw">'+t+'</span>';
+      if(TY[t]) return '<span class="t-ty">'+t+'</span>';
+      if(t==="Vrai"||t==="Faux") return '<span class="t-num">'+t+'</span>';
+      return t;
+    });
+    return out+(com?'<span class="t-com">'+esc(com)+'</span>':"");
+  }).join("\n");
+}
+
+/* ---------- État (stocké sur l'appareil si possible) ---------- */
+var KEY="cahier-algo-v1";
+var state={done:{},drafts:{},hints:{},checks:{},revealed:{},read:{}};
+try{
+  var raw=localStorage.getItem(KEY);
+  if(raw){var p=JSON.parse(raw);if(p&&typeof p==="object"){Object.keys(state).forEach(function(k){if(p[k]&&typeof p[k]==="object")state[k]=p[k];});}}
+}catch(e){}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){}}
+
+var app=document.getElementById("app");
+var current=null,confirming=false,lastKey=null;
+var byId={};EXOS.forEach(function(e){byId[e.id]=e;});
+
+var CHECK_SVG='<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
+var CHEV='<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>';
+
+function dots(n){
+  var s="";for(var i=1;i<=5;i++)s+='<i class="'+(i<=n?"on":"")+'"></i>';
+  return '<span class="dots" role="img" aria-label="Difficulté '+n+' sur 5">'+s+"</span>";
+}
+function go(key){
+  try{location.hash=key;}catch(e){}
+  route(key);
+}
+
+/* ---------- Accueil ---------- */
+function rowHTML(e){
+  var done=!!state.done[e.id],draft=!done&&(state.drafts[e.id]||"").trim();
+  var cls=done?"done":draft?"draft":"",label=done?"Réussi":draft?"En cours":"À faire";
+  return '<li><a class="exo" href="#exo-'+e.id+'" data-go="exo-'+e.id+'">'+
+    '<span class="st '+cls+'">'+(done?CHECK_SVG:"")+'<span class="sr">'+label+"</span></span>"+
+    '<span class="exo-txt"><span class="exo-title">'+esc(e.titre)+'</span><span class="exo-notions">'+esc(e.notions)+"</span></span>"+
+    '<span class="chev">'+CHEV+"</span></a></li>";
+}
+function renderHome(){
+  current=null;
+  var total=EXOS.length,nDone=EXOS.filter(function(e){return state.done[e.id];}).length;
+  var next=EXOS.filter(function(e){return !state.done[e.id];})[0];
+  var started=nDone>0||EXOS.some(function(e){return (state.drafts[e.id]||"").trim();});
+  var segs=EXOS.map(function(e){return '<span class="seg'+(state.done[e.id]?" on":"")+'"></span>';}).join("");
+  var cta=next
+    ? '<a class="btn btn-primary btn-col" href="#exo-'+next.id+'" data-go="exo-'+next.id+'"><span class="lab">'+(started?"Reprendre":"Commencer")+'</span><span class="ttl">'+esc(next.titre)+"</span></a>"
+    : '<p class="muted">Les '+total+" exercices sont réussis. Reprends-en un pour le refaire sans les indices.</p>";
+  var levels=LEVELS.map(function(L,li){
+    var list=EXOS.filter(function(e){return e.lvl===li;});
+    var d=list.filter(function(e){return state.done[e.id];}).length;
+    return '<section class="level" aria-labelledby="lv'+li+'"><div class="lvl-head"><div class="lvl-top">'+dots(li+1)+"<span>Niveau "+(li+1)+'</span><span class="lvl-count">'+d+" sur "+list.length+'</span></div><h2 id="lv'+li+'">'+esc(L.nom)+'</h2><p class="muted">'+esc(L.desc)+'</p>'+lessonLink(li)+'</div><ol class="exos">'+list.map(rowHTML).join("")+"</ol></section>";
+  }).join("");
+  app.innerHTML=
+    '<div class="top"><div><h1 class="brand">Cahier d\'algo</h1><p class="tag">Pseudo-code en français, du premier Écrire aux algorithmes classiques.</p></div>'+
+    '<a class="btn btn-quiet btn-sm" href="#memo" data-go="memo">Aide-mémoire</a></div>'+
+    '<div class="summary"><div class="summary-line"><b>'+nDone+" sur "+total+'</b><span class="muted small">exercices réussis</span></div><div class="segs" role="img" aria-label="'+nDone+" exercices réussis sur "+total+'">'+segs+"</div>"+cta+"</div>"+levels;
+}
+
+/* ---------- Exercice ---------- */
+function hintsHTML(ex){
+  var n=state.hints[ex.id]||0,tot=ex.indices.length,h="";
+  if(n)h+='<ol class="hints">'+ex.indices.slice(0,n).map(function(t){return "<li><span>"+fmt(t)+"</span></li>";}).join("")+"</ol>";
+  h+=n<tot
+    ? '<button class="btn" data-act="hint">'+(n?"Un autre indice":"Un indice")+' <span class="muted">('+n+" sur "+tot+")</span></button>"
+    : '<p class="muted small">Tous les indices sont affichés.</p>';
+  return h;
+}
+function corrigeHTML(ex){
+  if(state.revealed[ex.id]){
+    return '<div class="codehead"><span>Un corrigé possible</span><button class="btn btn-quiet btn-sm" data-act="copy">Copier</button></div>'+
+      '<pre class="code" tabindex="0">'+hl(ex.corrige)+"</pre>"+
+      '<div class="explain"><h3>Pourquoi ça marche</h3><p>'+fmt(ex.expl)+'</p><p class="muted small">Ton algorithme peut être différent et juste. Compare-le sur le jeu d\'essai plutôt que ligne à ligne.</p></div>';
+  }
+  if(confirming){
+    return '<div class="confirm"><p>Un corrigé lu trop tôt donne l\'impression d\'avoir compris. As-tu déroulé ton algorithme sur au moins un exemple du jeu d\'essai ?</p><div class="btns"><button class="btn btn-primary" data-act="reveal">Afficher le corrigé</button><button class="btn" data-act="cancel">Je cherche encore</button></div></div>';
+  }
+  return '<button class="btn" data-act="ask">Voir le corrigé</button>';
+}
+function finishHTML(ex){
+  var d=!!state.done[ex.id];
+  return '<button class="btn '+(d?"btn-done":"btn-primary")+'" data-act="done" aria-pressed="'+d+'">'+(d?CHECK_SVG+" Réussi, toucher pour annuler":"J'ai réussi cet exercice")+"</button>";
+}
+function setBox(id,html){var el=document.getElementById(id);if(el)el.innerHTML=html;}
+
+function renderExo(ex){
+  current=ex;confirming=false;
+  var i=EXOS.indexOf(ex),prev=EXOS[i-1],next=EXOS[i+1];
+  var L=LEVELS[ex.lvl],inLvl=EXOS.filter(function(e){return e.lvl===ex.lvl;}),pos=inLvl.indexOf(ex)+1;
+  var chips=CHIPS.map(function(c){return '<button type="button" class="chip" data-ins="'+c[0]+'">'+esc(c[1])+"</button>";}).join("");
+  var tests=ex.tests.map(function(t){return "<tr><td>"+esc(t[0])+"</td><td>"+esc(t[1])+"</td></tr>";}).join("");
+  var checks=ex.checks.map(function(c,k){return '<li><label><input type="checkbox" data-check="'+k+'"><span>'+esc(c)+"</span></label></li>";}).join("");
+  app.innerHTML=
+    '<a class="back" href="#" data-go="">← Tous les exercices</a>'+
+    '<header class="exo-head"><div class="lvl-top">'+dots(ex.lvl+1)+"<span>Niveau "+(ex.lvl+1)+" · "+esc(L.nom)+'</span><span class="lvl-count">'+pos+" sur "+inLvl.length+'</span></div>'+
+    '<h1 class="exo-h">'+esc(ex.titre)+'</h1><div class="notions">'+ex.notions.split(" · ").map(function(n){return '<span class="notion">'+esc(n)+"</span>";}).join("")+"</div>"+lessonLink(ex.lvl,true)+"</header>"+
+    '<div class="prose"><p>'+fmt(ex.enonce)+"</p></div>"+
+    '<dl class="example"><dt>Entrée</dt><dd>'+esc(ex.ex.e)+"</dd><dt>Sortie</dt><dd>"+esc(ex.ex.s)+"</dd></dl>"+
+    '<section class="sec"><h2>Ton algorithme</h2>'+
+      '<div class="chips" id="chips" role="toolbar" aria-label="Insérer un mot-clé">'+chips+"</div>"+
+      '<div class="paper"><textarea id="editor" wrap="off" spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" aria-label="Ton algorithme en pseudo-code" placeholder="Écris ton algorithme ici"></textarea></div>'+
+      '<div class="ed-foot"><span class="hint-line" id="saved">Le brouillon reste sur cet appareil.</span><button class="btn btn-quiet btn-sm" id="clear" type="button">Effacer</button></div>'+
+    "</section>"+
+    '<section class="sec"><h2>Indices</h2><div id="hints"></div></section>'+
+    '<section class="sec"><h2>Vérifie à la main</h2><p class="muted">Déroule ton algorithme sur papier avec chacune de ces entrées et compare au résultat attendu.</p>'+
+      '<div class="tablewrap"><table><thead><tr><th>Entrée</th><th>Résultat attendu</th></tr></thead><tbody>'+tests+"</tbody></table></div>"+
+      '<ul class="checks">'+checks+"</ul></section>"+
+    '<section class="sec"><h2>Corrigé</h2><div id="corrige"></div></section>'+
+    '<div class="finish"><div id="finish"></div><nav class="pager" aria-label="Exercices voisins">'+
+      (prev?'<a class="pg" href="#exo-'+prev.id+'" data-go="exo-'+prev.id+'"><span>Précédent</span><b>'+esc(prev.titre)+"</b></a>":"<span></span>")+
+      (next?'<a class="pg pg-next" href="#exo-'+next.id+'" data-go="exo-'+next.id+'"><span>Suivant</span><b>'+esc(next.titre)+"</b></a>":'<a class="pg pg-next" href="#" data-go=""><span>Terminé</span><b>Retour à l\'accueil</b></a>')+
+    "</nav></div>";
+  setBox("hints",hintsHTML(ex));setBox("corrige",corrigeHTML(ex));setBox("finish",finishHTML(ex));
+
+  var saved=state.checks[ex.id]||[];
+  Array.prototype.forEach.call(app.querySelectorAll("input[data-check]"),function(cb){cb.checked=!!saved[+cb.dataset.check];});
+
+  var ed=document.getElementById("editor");
+  ed.value=state.drafts[ex.id]||"";
+  var timer=null,escaped=false;
+  ed.addEventListener("input",function(){
+    var v=ed.value;
+    if(v.trim()==="")delete state.drafts[ex.id];else state.drafts[ex.id]=v;
+    clearTimeout(timer);
+    timer=setTimeout(function(){save();var s=document.getElementById("saved");if(s)s.textContent="Brouillon enregistré sur cet appareil.";},250);
+  });
+  ed.addEventListener("keydown",function(e){
+    if(e.key==="Escape"){escaped=true;return;}
+    if(e.key==="Tab"&&!e.shiftKey&&!escaped){e.preventDefault();insertAt(ed,"  ");return;}
+    if(e.key!=="Tab")escaped=false;
+  });
+  ed.addEventListener("blur",function(){escaped=false;});
+  ed.addEventListener("beforeinput",function(e){
+    if(e.inputType!=="insertLineBreak"&&e.inputType!=="insertParagraph")return;
+    e.preventDefault();
+    var v=ed.value,s=ed.selectionStart,ls=v.lastIndexOf("\n",s-1)+1;
+    var line=v.slice(ls,s),indent=(line.match(/^[ \t]*/)||[""])[0];
+    if(/(Alors|Faire|Début|Sinon|Répéter|Variables)\s*$/.test(line))indent+="  ";
+    insertAt(ed,"\n"+indent);
+  });
+}
+
+function insertAt(ta,text,caretOffset){
+  var s=ta.selectionStart,e=ta.selectionEnd;
+  ta.focus();
+  ta.setRangeText(text,s,e,"end");
+  var pos=typeof caretOffset==="number"?s+caretOffset:s+text.length;
+  ta.setSelectionRange(pos,pos);
+  ta.dispatchEvent(new Event("input",{bubbles:true}));
+}
+function insertSnippet(ta,snip){
+  var v=ta.value,s=ta.selectionStart,ls=v.lastIndexOf("\n",s-1)+1;
+  var indent=(v.slice(ls,s).match(/^[ \t]*/)||[""])[0];
+  var text=snip.replace(/\n/g,"\n"+indent),caret=text.indexOf("¦");
+  text=text.replace("¦","");
+  insertAt(ta,text,caret>=0?caret:undefined);
+}
+
+/* ---------- Leçons ---------- */
+function lessonLink(li,inExo){
+  var Ls=LESSONS[li];
+  if(!Ls)return "";
+  var read=state.read[li]&&!inExo;
+  return '<a class="btn btn-quiet btn-sm lesson-link" href="#cours-'+(li+1)+'" data-go="cours-'+(li+1)+'">'+(inExo?"Revoir la leçon":"Leçon : "+esc(Ls.titre))+(read?' <span class="muted">(lue)</span>':"")+"</a>";
+}
+function itemHTML(t){return "<li>"+fmt(t)+"</li>";}
+function blockHTML(b){
+  if(b.h)return "<h2>"+esc(b.h)+"</h2>";
+  if(b.p)return '<p class="ls-p">'+fmt(b.p)+"</p>";
+  if(b.code)return '<pre class="code" tabindex="0">'+hl(b.code)+"</pre>";
+  if(b.list)return '<ul class="ls-list">'+b.list.map(itemHTML).join("")+"</ul>";
+  if(b.steps)return '<ol class="ls-list">'+b.steps.map(itemHTML).join("")+"</ol>";
+  if(b.table){
+    return '<div class="tablewrap"><table><thead><tr>'+b.table.head.map(function(c){return "<th>"+esc(c)+"</th>";}).join("")+"</tr></thead><tbody>"+
+      b.table.rows.map(function(r){return "<tr>"+r.map(function(c){return "<td>"+fmt(c)+"</td>";}).join("")+"</tr>";}).join("")+"</tbody></table></div>";
+  }
+  if(b.tip)return '<aside class="tip"><b>'+esc(b.tip.t)+"</b><ul>"+b.tip.items.map(itemHTML).join("")+"</ul></aside>";
+  if(b.retenir)return '<section class="retenir"><b>À retenir</b><ul>'+b.retenir.map(itemHTML).join("")+"</ul></section>";
+  return "";
+}
+function renderLesson(li){
+  current=null;
+  var Ls=LESSONS[li],L=LEVELS[li],first=EXOS.filter(function(e){return e.lvl===li;})[0];
+  var prev=LESSONS[li-1],next=LESSONS[li+1];
+  state.read[li]=true;save();
+  app.innerHTML=
+    '<a class="back" href="#" data-go="">← Tous les exercices</a>'+
+    '<header class="exo-head"><div class="lvl-top">'+dots(li+1)+"<span>Leçon · Niveau "+(li+1)+" · "+esc(L.nom)+'</span></div><h1 class="exo-h">'+esc(Ls.titre)+'</h1><p class="muted ls-intro">'+esc(Ls.resume)+"</p></header>"+
+    '<article class="lesson">'+Ls.blocs.map(blockHTML).join("")+"</article>"+
+    '<div class="finish"><a class="btn btn-primary btn-col" href="#exo-'+first.id+'" data-go="exo-'+first.id+'"><span class="lab">Passe à la pratique</span><span class="ttl">'+esc(first.titre)+"</span></a>"+
+    '<nav class="pager" aria-label="Autres leçons">'+
+      (prev?'<a class="pg" href="#cours-'+li+'" data-go="cours-'+li+'"><span>Leçon précédente</span><b>'+esc(prev.titre)+"</b></a>":"<span></span>")+
+      (next?'<a class="pg pg-next" href="#cours-'+(li+2)+'" data-go="cours-'+(li+2)+'"><span>Leçon suivante</span><b>'+esc(next.titre)+"</b></a>":"<span></span>")+
+    "</nav></div>";
+}
+
+/* ---------- Aide-mémoire ---------- */
+function renderMemo(){
+  current=null;
+  app.innerHTML='<a class="back" href="#" data-go="">← Tous les exercices</a><header class="exo-head"><h1 class="exo-h">Aide-mémoire</h1><p class="muted">La syntaxe utilisée dans les exercices et dans les corrigés.</p></header>'+
+    MEMO.map(function(m){return '<section class="memo"><h2>'+esc(m.t)+'</h2><pre class="code" tabindex="0">'+hl(m.c)+"</pre>"+(m.n?"<p class=\"muted\">"+fmt(m.n)+"</p>":"")+"</section>";}).join("");
+}
+
+/* ---------- Routage ---------- */
+function route(h){
+  var key=(h==null?location.hash:h).replace(/^#/,"");
+  if(key===lastKey)return;
+  lastKey=key;
+  if(key.indexOf("exo-")===0&&byId[key.slice(4)])renderExo(byId[key.slice(4)]);
+  else if(/^cours-[1-5]$/.test(key))renderLesson(+key.slice(6)-1);
+  else if(key==="memo")renderMemo();
+  else renderHome();
+  window.scrollTo(0,0);
+}
+window.addEventListener("hashchange",function(){route();});
+
+/* ---------- Événements ---------- */
+var clearTimer=null;
+document.addEventListener("click",function(e){
+  var g=e.target.closest("[data-go]");
+  if(g){e.preventDefault();go(g.getAttribute("data-go"));return;}
+  var ins=e.target.closest("[data-ins]");
+  if(ins){var ta=document.getElementById("editor");if(ta)insertSnippet(ta,SNIPPETS[ins.dataset.ins]);return;}
+  if(e.target.id==="clear"){
+    var b=e.target,ta2=document.getElementById("editor");
+    if(b.dataset.arm){clearTimeout(clearTimer);b.dataset.arm="";b.textContent="Effacer";if(ta2){ta2.value="";ta2.dispatchEvent(new Event("input",{bubbles:true}));}}
+    else{b.dataset.arm="1";b.textContent="Confirmer l'effacement";clearTimer=setTimeout(function(){b.dataset.arm="";b.textContent="Effacer";},3000);}
+    return;
+  }
+  var a=e.target.closest("[data-act]");
+  if(!a||!current)return;
+  var ex=current;
+  switch(a.dataset.act){
+    case "hint":state.hints[ex.id]=Math.min((state.hints[ex.id]||0)+1,ex.indices.length);save();setBox("hints",hintsHTML(ex));break;
+    case "ask":confirming=true;setBox("corrige",corrigeHTML(ex));break;
+    case "cancel":confirming=false;setBox("corrige",corrigeHTML(ex));break;
+    case "reveal":state.revealed[ex.id]=true;confirming=false;save();setBox("corrige",corrigeHTML(ex));break;
+    case "done":if(state.done[ex.id])delete state.done[ex.id];else state.done[ex.id]=true;save();setBox("finish",finishHTML(ex));break;
+    case "copy":
+      var done=function(){a.textContent="Copié";setTimeout(function(){a.textContent="Copier";},1500);};
+      var fallback=function(){var pre=app.querySelector("pre.code");if(!pre)return;var r=document.createRange();r.selectNodeContents(pre);var sel=window.getSelection();sel.removeAllRanges();sel.addRange(r);a.textContent="Sélectionné";setTimeout(function(){a.textContent="Copier";},1500);};
+      try{navigator.clipboard.writeText(ex.corrige).then(done,fallback);}catch(err){fallback();}
+      break;
+  }
+});
+/* Garder le focus dans l'éditeur quand on touche un bouton d'insertion */
+document.addEventListener("mousedown",function(e){if(e.target.closest("[data-ins]"))e.preventDefault();});
+document.addEventListener("change",function(e){
+  var cb=e.target;
+  if(!cb.matches||!cb.matches("input[data-check]")||!current)return;
+  var arr=(state.checks[current.id]||[]).slice();
+  arr[+cb.dataset.check]=cb.checked;
+  state.checks[current.id]=arr;save();
+});
+
+route();
+})();
+</script>
+
+</body>
+</html>
